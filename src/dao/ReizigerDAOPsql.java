@@ -6,34 +6,31 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReizigerDAOsql implements ReizigerDAO {
+public class ReizigerDAOPsql implements ReizigerDAO {
     private Connection connection;
 
-    public ReizigerDAOsql(Connection connection) throws SQLException {
+    public ReizigerDAOPsql(Connection connection) throws SQLException {
         this.connection = connection;
     }
 
     @Override
-    public boolean save(Reiziger reiziger) {
-        try {
+    public boolean save(Reiziger reiziger) throws SQLException {
             PreparedStatement ps = connection.prepareStatement("INSERT INTO reiziger values (?, ?, ? , ?, ?)");
             ps.setInt(1, reiziger.getId());
             ps.setString(2, reiziger.getVoorletters());
             ps.setString(3, reiziger.getTussenvoegsel());
             ps.setString(4, reiziger.getAchternaam());
             ps.setDate(5, reiziger.getGeboortedatum());
-            ps.executeQuery();
 
-            ps.close();
+        ResultSet rs = ps.executeQuery();
+
+        ps.close();
+        rs.close();
             return true;
-        } catch (SQLException e) {
-            return false;
-        }
     }
 
     @Override
-    public boolean update(Reiziger reiziger) {
-        try {
+    public boolean update(Reiziger reiziger) throws SQLException {
             PreparedStatement ps = connection.prepareStatement("UPDATE reiziger SET voorletters = ?, tussenvoegsel = ?, achternaam = ?, geboortedatum = ? WHERE reiziger_id = ?");
             ps.setInt(5, reiziger.getId());
             ps.setString(1, reiziger.getVoorletters());
@@ -46,28 +43,21 @@ public class ReizigerDAOsql implements ReizigerDAO {
             ps.close();
             rs.close();
             return true;
-        } catch (SQLException e) {
-            return false;
-        }
+
     }
 
     @Override
-    public boolean delete(Reiziger reiziger) {
-        try {
+    public boolean delete(Reiziger reiziger) throws SQLException {
             PreparedStatement ps = connection.prepareStatement("DELETE FROM reiziger WHERE reiziger_id = ?");
             ps.setInt(1, reiziger.getId());
             ps.executeQuery();
 
             ps.close();
             return true;
-        } catch (SQLException e) {
-            return false;
-        }
     }
 
     @Override
-    public Reiziger findById(int id) {
-        try {
+    public Reiziger findById(int id) throws SQLException {
             PreparedStatement ps = connection.prepareStatement("SELECT * FROM reiziger WHERE reiziger_id = ?");
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
@@ -77,14 +67,10 @@ public class ReizigerDAOsql implements ReizigerDAO {
             ps.close();
             rs.close();
             return reiziger;
-        } catch (SQLException e) {
-            return null;
-        }
     }
 
     @Override
-    public List<Reiziger> findByGbdatum(String datum) {
-        try {
+    public List<Reiziger> findByGbdatum(String datum) throws SQLException {
             PreparedStatement ps = connection.prepareStatement("SELECT * FROM reiziger WHERE geboortedatum = ?");
             ps.setDate(1, Date.valueOf(datum));
             ResultSet rs = ps.executeQuery();
@@ -99,14 +85,10 @@ public class ReizigerDAOsql implements ReizigerDAO {
             ps.close();
             rs.close();
             return reizigerList;
-        } catch (SQLException e) {
-            return null;
-        }
     }
 
     @Override
-    public List<Reiziger> findAll() {
-        try {
+    public List<Reiziger> findAll() throws SQLException {
             PreparedStatement ps = connection.prepareStatement("SELECT * FROM reiziger");
             ResultSet rs = ps.executeQuery();
 
@@ -120,8 +102,5 @@ public class ReizigerDAOsql implements ReizigerDAO {
             ps.close();
             rs.close();
             return reizigerList;
-        } catch (SQLException e) {
-            return null;
-        }
     }
 }
