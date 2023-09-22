@@ -50,12 +50,8 @@ public class Reiziger {
         return geboortedatum;
     }
 
-    public Adres getAdres() {
-        return adres;
-    }
-
-    public void setAdres(Adres adres) {
-        this.adres = adres;
+    public List<OvChipkaart> getOv_chipkaarten() {
+        return ov_chipkaarten;
     }
 
     @Override
