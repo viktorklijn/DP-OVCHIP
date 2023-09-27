@@ -1,8 +1,6 @@
-import dao.AdresDAO;
-import dao.AdresDAOPsql;
-import dao.ReizigerDAO;
-import dao.ReizigerDAOPsql;
+import dao.*;
 import domain.Adres;
+import domain.OvChipkaart;
 import domain.Reiziger;
 
 import java.sql.*;
@@ -14,7 +12,8 @@ public class Main {
 
     public static void main(String[] args) throws SQLException {
 //        testReizigerDAO(new ReizigerDAOPsql(getConnection()));
-        testAdresDAO(new AdresDAOPsql(getConnection()));
+//        testAdresDAO(new AdresDAOPsql(getConnection()));
+        testOvchipDAO(new OvChipkaartDAOPsql(getConnection()));
         closeConnection();
     }
 
@@ -131,6 +130,53 @@ public class Main {
         System.out.print("[TestFindByGbdatum] Zoek adres van reiziger met id 1 :\n");
         a = adao.findByReiziger(new ReizigerDAOPsql(getConnection()).findById(1));
         System.out.println(a);
+        System.out.println();
+    }
+
+    private static void testOvchipDAO(OvChipkaartDAO ovChipkaartDAO) throws SQLException {
+        System.out.println("\n---------- Test OvChipkaartDAO -------------");
+
+        // Haal alle ovchipkaarten op uit de database
+        List<OvChipkaart> ovChipkaarten = ovChipkaartDAO.findAll();
+        System.out.println("[TestFindAll] OvChipkaartDAO.findAll() geeft de volgende adressen:");
+        for (OvChipkaart ovChipkaart : ovChipkaarten) {
+            System.out.println(ovChipkaart);
+        }
+        System.out.println();
+
+        // Maak een nieuwe ovchipkaart aan en persisteer deze in de database
+        OvChipkaart ovChipkaart = new OvChipkaart(1, java.sql.Date.valueOf("2030-01-01"), 2, 3000.00, 6);
+        System.out.print("[TestSave] Eerst " + ovChipkaarten.size() + " ovchipkaarten, na OvChipkaartDAO.save() ");
+        ovChipkaartDAO.save(ovChipkaart);
+        ovChipkaarten = ovChipkaartDAO.findAll();
+        System.out.println(ovChipkaarten.size() + " ovchipkaarten\n");
+
+
+        // verwijder ovchipkaart uit database
+        System.out.print("[TestDelete] Eerst " + ovChipkaarten.size() + " ovchipkaarten, na OvChipkaartDAO.delete() ");
+        ovChipkaartDAO.delete(ovChipkaart);
+        ovChipkaarten = ovChipkaartDAO.findAll();
+        System.out.println(ovChipkaarten.size() + " ovchipkaarten\n");
+
+        // update ovchipkaart in database
+        ovChipkaartDAO.save(ovChipkaart);
+        System.out.print("[TestUpdate] ovchipkaart voor update: " + ovChipkaartDAO.findById(1) + " ");
+        ovChipkaart = new OvChipkaart(1, java.sql.Date.valueOf("2035-01-04"), 1, 3333.00, 6);
+        ovChipkaartDAO.update(ovChipkaart);
+        System.out.print("ovchipkaart na update: " + ovChipkaartDAO.findById(1) + "\n\n");
+        ovChipkaartDAO.delete(ovChipkaart);
+
+        // vind ovchipkaart uit database door middel van id
+        System.out.print("[TestFindById] Zoek een ovchipkaart met id 35283 :\n");
+        OvChipkaart ovChipkaart1 = ovChipkaartDAO.findById(35283);
+        System.out.println(ovChipkaart1 + "\n");
+
+        // vind ovchipkaart uit database door middel van reiziger
+        System.out.print("[TestFindByReiziger] vind ovchipkaart door middel van reiziger :\n");
+        ovChipkaarten = ovChipkaartDAO.findByReiziger(new ReizigerDAOPsql(getConnection()).findById(2));
+        for (OvChipkaart ovChipkaart2 : ovChipkaarten) {
+            System.out.println(ovChipkaart);
+        }
         System.out.println();
     }
 }
