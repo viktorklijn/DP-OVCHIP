@@ -28,10 +28,9 @@ public class AdresDAOPsql implements AdresDAO {
         ps.setString(5, adres.getWoonplaats());
         ps.setInt(6, adres.getReiziger_id());
 
-        ResultSet rs = ps.executeQuery();
+        ps.executeUpdate();
 
         ps.close();
-        rs.close();
 
         return true;
     }
@@ -46,10 +45,9 @@ public class AdresDAOPsql implements AdresDAO {
         ps.setString(4, adres.getWoonplaats());
         ps.setInt(5, adres.getReiziger_id());
 
-        ResultSet rs = ps.executeQuery();
+        ps.executeUpdate();
 
         ps.close();
-        rs.close();
 
         return true;
     }
@@ -58,7 +56,7 @@ public class AdresDAOPsql implements AdresDAO {
     public boolean delete(Adres adres) throws SQLException {
         PreparedStatement ps = connection.prepareStatement("DELETE FROM adres WHERE adres_id = ?");
         ps.setInt(1, adres.getAdres_id());
-        ps.executeQuery();
+        ps.executeUpdate();
 
         ps.close();
         return true;

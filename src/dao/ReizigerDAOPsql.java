@@ -1,5 +1,6 @@
 package dao;
 
+import domain.Adres;
 import domain.Reiziger;
 
 import java.sql.*;
@@ -22,10 +23,9 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             ps.setString(4, reiziger.getAchternaam());
             ps.setDate(5, reiziger.getGeboortedatum());
 
-        ResultSet rs = ps.executeQuery();
+            ps.executeUpdate();
 
-        ps.close();
-        rs.close();
+            ps.close();
             return true;
     }
 
@@ -38,10 +38,9 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             ps.setString(3, reiziger.getAchternaam());
             ps.setDate(4, reiziger.getGeboortedatum());
 
-            ResultSet rs = ps.executeQuery();
+            ps.executeUpdate();
 
             ps.close();
-            rs.close();
             return true;
 
     }
@@ -50,7 +49,13 @@ public class ReizigerDAOPsql implements ReizigerDAO {
     public boolean delete(Reiziger reiziger) throws SQLException {
             PreparedStatement ps = connection.prepareStatement("DELETE FROM reiziger WHERE reiziger_id = ?");
             ps.setInt(1, reiziger.getId());
-            ps.executeQuery();
+            ps.executeUpdate();
+
+            if(reiziger.getAdres() != null) {
+                ps = connection.prepareStatement("DELETE FROM adres WHERE adres_id = ?");
+                ps.setInt(1, reiziger.getAdres().getAdres_id());
+                ps.executeUpdate();
+            }
 
             ps.close();
             return true;
@@ -63,6 +68,13 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             ResultSet rs = ps.executeQuery();
             rs.next();
             Reiziger reiziger = new Reiziger(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getDate(5));
+            List<Adres> adressen = new AdresDAOPsql(connection).findAll();
+
+            for (Adres adres : adressen) {
+                if (adres.getReiziger_id() == reiziger.getId()) {
+                    reiziger.setAdres(adres);
+                }
+            }
 
             ps.close();
             rs.close();
@@ -75,11 +87,20 @@ public class ReizigerDAOPsql implements ReizigerDAO {
             ps.setDate(1, Date.valueOf(datum));
             ResultSet rs = ps.executeQuery();
 
+            List<Adres> adressen = new AdresDAOPsql(connection).findAll();
             List<Reiziger> reizigerList = new ArrayList<>();
 
             while (rs.next()) {
                 Reiziger reiziger = new Reiziger(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getDate(5));
                 reizigerList.add(reiziger);
+            }
+
+            for (Adres adres : adressen) {
+                for (Reiziger reiziger : reizigerList) {
+                    if (adres.getReiziger_id() == reiziger.getId()) {
+                        reiziger.setAdres(adres);
+                    }
+                }
             }
 
             ps.close();
@@ -94,9 +115,19 @@ public class ReizigerDAOPsql implements ReizigerDAO {
 
             List<Reiziger> reizigerList = new ArrayList<>();
 
+            List<Adres> adressen = new AdresDAOPsql(connection).findAll();
+
             while(rs.next()) {
                 Reiziger reiziger = new Reiziger(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getDate(5));
                 reizigerList.add(reiziger);
+            }
+
+            for (Adres adres : adressen) {
+                for (Reiziger reiziger : reizigerList) {
+                    if (adres.getReiziger_id() == reiziger.getId()) {
+                        reiziger.setAdres(adres);
+                    }
+                }
             }
 
             ps.close();

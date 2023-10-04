@@ -66,4 +66,12 @@ public class Reiziger {
                 ", adres=" + adres +
                 '}';
     }
+
+    public void setAdres(Adres adres) {
+        this.adres = adres;
+    }
+
+    public Adres getAdres() {
+        return adres;
+    }
 }
