@@ -1,6 +1,7 @@
 package domain;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OvChipkaart {
@@ -9,7 +10,7 @@ public class OvChipkaart {
     private int klasse;
     private double saldo;
     private int reiziger_id;
-    private List<OvChipkaartProduct> ov_chipkaart_producten;
+    private List<Product> producten;
 
     public OvChipkaart(int kaart_nummer, Date geldig_tot, int klasse, double saldo, int reiziger_id) {
         this.kaart_nummer = kaart_nummer;
@@ -17,6 +18,7 @@ public class OvChipkaart {
         this.klasse = klasse;
         this.saldo = saldo;
         this.reiziger_id = reiziger_id;
+        this.producten = new ArrayList<>();
     }
 
     public int getKaart_nummer() {
@@ -30,8 +32,12 @@ public class OvChipkaart {
         return reiziger_id;
     }
 
-    public List<OvChipkaartProduct> getOv_chipkaart_producten() {
-        return ov_chipkaart_producten;
+    public List<Product> getProducten() {
+        return producten;
+    }
+
+    public void removeProduct(Product product) {
+        producten.remove(product);
     }
 
     public int getKlasse() {
@@ -40,5 +46,21 @@ public class OvChipkaart {
 
     public double getSaldo() {
         return saldo;
+    }
+
+    public void addProduct(Product product) {
+        producten.add(product);
+    }
+
+    @Override
+    public String toString() {
+        return "OvChipkaart{" +
+                "kaart_nummer=" + kaart_nummer +
+                ", geldig_tot=" + geldig_tot +
+                ", klasse=" + klasse +
+                ", saldo=" + saldo +
+                ", reiziger_id=" + reiziger_id +
+                ", producten=" + producten +
+                '}';
     }
 }

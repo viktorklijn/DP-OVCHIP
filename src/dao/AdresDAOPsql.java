@@ -67,8 +67,12 @@ public class AdresDAOPsql implements AdresDAO {
         PreparedStatement ps = connection.prepareStatement("SELECT * FROM adres WHERE adres_id = ?");
         ps.setInt(1, id);
         ResultSet rs = ps.executeQuery();
-        rs.next();
-        Adres adres = new Adres(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getInt(6));
+
+        Adres adres = null;
+
+        while (rs.next()) {
+             adres = new Adres(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5), rs.getInt(6));
+        }
 
         ps.close();
         rs.close();

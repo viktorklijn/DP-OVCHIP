@@ -97,8 +97,6 @@ public class OvChipkaartDAOPsql implements OvChipkaartDAO {
         ps.setInt(1, reiziger.getId());
         ResultSet rs = ps.executeQuery();
 
-        rs.next();
-
         List<OvChipkaart> ovChipkaartList = new ArrayList<>();
 
         while(rs.next()) {
