@@ -1,6 +1,7 @@
 package domain;
 
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Reiziger {
@@ -17,6 +18,7 @@ public class Reiziger {
         this.voorletters = voorletters;
         this.achternaam = achternaam;        this.tussenvoegsel = tussenvoegsel;
         this.geboortedatum = geboortedatum;
+        this.ov_chipkaarten = new ArrayList<>();
     }
 
     public int getId() {
@@ -54,6 +56,16 @@ public class Reiziger {
         return ov_chipkaarten;
     }
 
+
+
+    public void setAdres(Adres adres) {
+        this.adres = adres;
+    }
+
+    public Adres getAdres() {
+        return adres;
+    }
+
     @Override
     public String toString() {
         return "Reiziger{" +
@@ -67,11 +79,7 @@ public class Reiziger {
                 '}';
     }
 
-    public void setAdres(Adres adres) {
-        this.adres = adres;
-    }
-
-    public Adres getAdres() {
-        return adres;
+    public void addOvChipkaart(OvChipkaart ovChipkaart) {
+        ov_chipkaarten.add(ovChipkaart);
     }
 }
