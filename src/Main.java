@@ -1,6 +1,7 @@
 import dao.*;
 import domain.Adres;
 import domain.OvChipkaart;
+import domain.Product;
 import domain.Reiziger;
 
 import java.sql.*;
@@ -13,7 +14,8 @@ public class Main {
     public static void main(String[] args) throws SQLException {
 //        testReizigerDAO(new ReizigerDAOPsql(getConnection()));
 //        testAdresDAO(new AdresDAOPsql(getConnection()));
-        testOvchipDAO(new OvChipkaartDAOPsql(getConnection()));
+//        testOvchipDAO(new OvChipkaartDAOPsql(getConnection()));
+        testProductDAO(new ProductDAOPsql(getConnection()));
         closeConnection();
     }
 
@@ -131,6 +133,8 @@ public class Main {
         a = adao.findByReiziger(new ReizigerDAOPsql(getConnection()).findById(1));
         System.out.println(a);
         System.out.println();
+
+        adao.findById(100);
     }
 
     private static void testOvchipDAO(OvChipkaartDAO ovChipkaartDAO) throws SQLException {
@@ -178,5 +182,74 @@ public class Main {
             System.out.println(ovChipkaart);
         }
         System.out.println();
+
+    }
+    private static void testProductDAO(ProductDAO productDAO) throws SQLException {
+        System.out.println("\n---------- Test ProductDAO -------------");
+
+//        // Haal alle producten op uit de database
+        List<Product> producten = productDAO.findAll();
+        System.out.println("[TestFindAll] ProductDAO.findAll() geeft de volgende producten:");
+        for (Product product : producten) {
+            System.out.println(product);
+        }
+        System.out.println();
+
+//        // Maak een nieuw product aan en persisteer deze in de database
+        Product product = new Product(10, "test", "test", 1.00, new OvChipkaartDAOPsql(getConnection()).findById(35283));
+        System.out.print("[TestSave] Eerst " + producten.size() + " producten, na ProductDAO.save() ");
+        productDAO.save(product);
+        producten = productDAO.findAll();
+        System.out.println(producten.size() + " producten\n");
+//
+//
+//        // verwijder product uit database
+        System.out.print("[TestDelete] Eerst " + producten.size() + " producten, na ProductDAO.delete() ");
+        productDAO.delete(product);
+        producten = productDAO.findAll();
+        System.out.println(producten.size() + " producten\n");
+//
+        // update product in database
+        product = new Product(10, "test", "test", 1.00, new OvChipkaartDAOPsql(getConnection()).findById(35283));
+        productDAO.save(product);
+
+        System.out.print("[TestUpdate] product voor update: " + productDAO.findById(10) + " ");
+        product = new Product(10, "test2", "test2", 100.00, new OvChipkaartDAOPsql(getConnection()).findById(35283));
+        productDAO.update(product);
+        System.out.println();
+        System.out.print("product na update: " + productDAO.findById(10) + "\n\n");
+        productDAO.delete(product);
+
+        // vind producten uit database door middel van ovchipkaart
+        System.out.print("[TestFindByOvChipkaart] vind producten door middel van ovchipkaart :\n");
+        OvChipkaart ovChipkaart = new OvChipkaartDAOPsql(connection).findById(35283);
+        List<Product> products = productDAO.findByOVChipkaart(ovChipkaart);
+        for (Product p : products) {
+            System.out.println(p);
+        }
+        System.out.println();
+
+        // Ovchip en product toevoegen aan reiziger test
+        System.out.print("[TestAddProductToReiziger] voeg product toe aan reiziger :\n");
+        Reiziger reiziger = new Reiziger(10, "H", "", "Jonkers", java.sql.Date.valueOf("2002-12-03"));
+        Adres adres = new Adres(10, "2341NV", "74", "Hugo de Vrieslaan", "Oegstgeest", 10);
+        reiziger.setAdres(adres);
+        new ReizigerDAOPsql(connection).save(reiziger);
+        new AdresDAOPsql(connection).save(adres);
+        ovChipkaart = new OvChipkaart(11111, java.sql.Date.valueOf("2030-01-01"), 2, 3000.00, 10);
+        reiziger.addOvChipkaart(ovChipkaart);
+        new OvChipkaartDAOPsql(connection).save(ovChipkaart);
+
+        product = new Product(11, "test", "test", 1.00, ovChipkaart);
+        productDAO.save(product);
+
+        System.out.println(reiziger);
+
+        new ProductDAOPsql(connection).delete(product);
+        new OvChipkaartDAOPsql(connection).delete(ovChipkaart);
+        new AdresDAOPsql(connection).delete(adres);
+        new ReizigerDAOPsql(connection).delete(reiziger);
+
+
     }
 }
